@@ -12,6 +12,13 @@ def show_correlation_heatmap(df):
     plt.show()
 
 
+def show_metrics(y_true, y_pred):
+    print('accuracy', metrics.accuracy_score(y_true, y_pred))
+    print('error rate', metrics.mean_absolute_percentage_error(y_true, y_pred))
+    print('recall', metrics.recall_score(y_true, y_pred))
+    print('precision positive', metrics.precision_score(y_true, y_pred))
+    print('precision negative', metrics.precision_score(y_true, y_pred, pos_label=0))
+
 datasource_loc = "creditcard.csv"
 df = pd.read_csv(datasource_loc)
 #show_correlation_heatmap(df)
@@ -26,11 +33,8 @@ clf = clf.fit(X, Y)
 #                    239.93]]))
 
 Y_pred = clf.predict(X)
+show_metrics(Y, Y_pred)
 
-print('accuracy', metrics.accuracy_score(Y, Y_pred))
-print('error rate', metrics.mean_absolute_percentage_error(Y, Y_pred))
-print('recall', metrics.recall_score(Y, Y_pred))
-print('precision positive', metrics.precision_score(Y, Y_pred))
-print('precision negative', metrics.precision_score(Y, Y_pred, pos_label=0))
+
 
 
