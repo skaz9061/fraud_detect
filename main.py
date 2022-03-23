@@ -18,7 +18,7 @@ def show_correlation_heatmap(df):
             if c >= r:
                 corrs_abs[r, c] = 0
 
-    corrs_abs = np.where(corrs_abs < 0.3, 0, corrs_abs) # can simplify this corrs_cords = corrs_abs >= 0.3
+    corrs_abs = np.where(corrs_abs < 0.3, 0, corrs_abs)
     corrs_cords = np.nonzero(corrs_abs)
 
     for tup in zip(corrs_cords[0].tolist(), corrs_cords[1].tolist()):
@@ -28,6 +28,25 @@ def show_correlation_heatmap(df):
     plt.colorbar()
     plt.xticks(range(len(df.columns)), df.columns, rotation='vertical')
     plt.yticks(range(len(df.columns)), df.columns)
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.set_xlabel('V14', fontsize=15)
+    ax.set_ylabel('V17', fontsize=15)
+    ax.set_title('Analysis of Features Correlated to Class')
+    colors = ['r', 'g']
+    targets = [0.0, 1.0]
+
+    for target, color in zip(targets, colors):
+        indicesToKeep = df['Class'] == target
+        ax.scatter(df.loc[indicesToKeep, 'V14']
+                   , df.loc[indicesToKeep, 'V17']
+                   , c=color
+                   , s=50)
+
+    ax.legend(targets)
+    ax.grid()
+
     plt.show()
 
 
@@ -108,14 +127,16 @@ def show_metrics(y_true, y_pred):
 
 datasource_loc = "creditcard.csv"
 df = pd.read_csv(datasource_loc)
-#show_correlation_heatmap(df)
+show_correlation_heatmap(df)
 
-X = df.values[:, 0:30]
+df_pp = df.loc[:, ['V14', 'V17']]
+
+X = df_pp.values[:,:]
 Y = df.values[:, 30]
 
-show_pca(X, df.columns[:-1], Y)
+#show_pca(X, df.columns[:-1], Y)
 
-# clf = RandomForestClassifier(n_estimators=20)
+clf = RandomForestClassifier(n_estimators=100)
 # clf = RandomForestClassifier(n_estimators=20, max_depth=3)
 # clf = RandomForestClassifier(n_estimators=20, max_depth=5)
 # clf = RandomForestClassifier(n_estimators=20, max_features=5, max_depth=5)
@@ -125,8 +146,7 @@ show_pca(X, df.columns[:-1], Y)
 # clf = RandomForestClassifier(n_estimators=50, max_features=4, max_depth=5)
 # clf = RandomForestClassifier(n_estimators=20, max_features=5, max_depth=5, random_state=0)
 # clf = RandomForestClassifier(n_estimators=20, max_features='sqrt', max_depth=5, random_state=0)
-# clf = RandomForestClassifier(n_estimators=20, max_features='log2', max_depth=5, random_state=0)
-clf = RandomForestClassifier(n_estimators=20, max_features='auto', max_depth=5, random_state=0)
+# clf = RandomForestClassifier(n_estimators=20, max_features='log2', max_depth=5, random_state=0)#clf = RandomForestClassifier(n_estimators=20, max_features='auto', max_depth=5, random_state=0)
 # clf = LogisticRegression()
 # clf = GradientBoostingClassifier(n_estimators=20, learning_rate=1.0, max_depth=3, random_state=0)
 # clf = GradientBoostingClassifier(n_estimators=20)
