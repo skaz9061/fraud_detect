@@ -18,7 +18,7 @@ def show_correlation_heatmap(df):
             if c >= r:
                 corrs_abs[r, c] = 0
 
-    corrs_abs = np.where(corrs_abs < 0.3, 0, corrs_abs)
+    corrs_abs = np.where(corrs_abs < 0.3, 0, corrs_abs) # can simplify this corrs_cords = corrs_abs >= 0.3
     corrs_cords = np.nonzero(corrs_abs)
 
     for tup in zip(corrs_cords[0].tolist(), corrs_cords[1].tolist()):
@@ -30,6 +30,74 @@ def show_correlation_heatmap(df):
     plt.yticks(range(len(df.columns)), df.columns)
     plt.show()
 
+
+def show_pca(feature_values, features,  target_values):
+    # Transform data
+    features_df = pd.DataFrame(data=feature_values, columns=features)
+    time_amt_col = features_df.loc[:, ['Time', 'Amount']]
+    pca_feat_col = features_df.loc[:, [x for x in features if x not in ['Time', 'Amount']]]
+
+    #X = StandardScaler().fit_transform(feature_values)
+    pca_time_amount = StandardScaler().fit_transform(time_amt_col)
+    X = np.concatenate([pca_time_amount, pca_feat_col.values[:, :]], axis=1)
+
+
+    # Find principal components
+    pca = PCA(n_components=2)
+    principal_components = pca.fit_transform(X)
+    principal_df = pd.DataFrame(data=principal_components, columns=['PC 1', 'PC 2'])
+
+    #print(principal_df.head(30))
+
+    # Visualize Principal Components
+    final_df = pd.concat([principal_df, pd.DataFrame(data=target_values, columns=['target'])], axis=1)
+
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_xlabel('Principal Component 1', fontsize=15)
+    ax.set_ylabel('Principal Component 2', fontsize=15)
+    ax.set_title('2 component PCA', fontsize=20)
+    targets = [0.0, 1.0]
+    colors = ['r', 'g', 'b']
+    for target, color in zip(targets, colors):
+        indicesToKeep = final_df['target'] == target
+        ax.scatter(final_df.loc[indicesToKeep, 'PC 1']
+                   , final_df.loc[indicesToKeep, 'PC 2']
+                   , c=color
+                   , s=50)
+    ax.legend(targets)
+    ax.grid()
+
+    plt.show()
+
+
+    #3d scatterplot
+    '''
+    fig = plt.figure(figsize=(8, 8))
+    ax = plt.axes(projection="3d")
+    ax.set_xlabel('Principal Component 1', fontsize=15)
+    ax.set_ylabel('Principal Component 2', fontsize=15)
+    ax.set_zlabel('Principal Component 3', fontsize=15)
+
+    ax.set_title('3 component PCA', fontsize=20)
+    targets = [0.0, 1.0]
+    colors = ['r', 'g', 'b']
+    for target, color in zip(targets, colors):
+        indicesToKeep = final_df['target'] == target
+        ax.scatter3D(final_df.loc[indicesToKeep, 'PC 1'],
+                   final_df.loc[indicesToKeep, 'PC 2'],
+                   final_df.loc[indicesToKeep, 'PC 3'],
+                   c=color,
+                   s=50)
+    ax.legend(targets)
+    #ax.grid()
+
+    plt.show()'''
+
+
+    print(sum(pca.explained_variance_ratio_))
+
+
 def show_metrics(y_true, y_pred):
     print('accuracy', metrics.accuracy_score(y_true, y_pred))
     print('error rate', metrics.mean_absolute_percentage_error(y_true, y_pred))
@@ -40,10 +108,13 @@ def show_metrics(y_true, y_pred):
 
 datasource_loc = "creditcard.csv"
 df = pd.read_csv(datasource_loc)
-show_correlation_heatmap(df)
+#show_correlation_heatmap(df)
 
 X = df.values[:, 0:30]
 Y = df.values[:, 30]
+
+show_pca(X, df.columns[:-1], Y)
+
 # clf = RandomForestClassifier(n_estimators=20)
 # clf = RandomForestClassifier(n_estimators=20, max_depth=3)
 # clf = RandomForestClassifier(n_estimators=20, max_depth=5)
