@@ -12,7 +12,7 @@ To run this file:
 2. Start Jupyter Notebook in the terminal with the command `jupyter notebook`. A browser window should open automatically. If not, follow the instruction in the terminal.
 3. Navigate to the directory where the files are stored and open 'fraud_detectv2.ipynb'.
 4. In the Menu at the top of the screen, click Kernel -> Restart & Run All
-5. That's it! Once the code finishes running, scroll down and you can use the
+5. That's it! Once the code finishes running, scroll down and you can use the Descriptive and Non-Descriptive analyses.
 
 Note: If the UI doesn't load properly the first time, Restart & Run All again.
 
