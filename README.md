@@ -15,5 +15,3 @@ To run this file:
 5. That's it! Once the code finishes running, scroll down and you can use the Descriptive and Non-Descriptive analyses.
 
 Note: If the UI doesn't load properly the first time, Restart & Run All again.
-
-main.py was used for testing different classifiers and parameters. The Jupyter notebook file should be used to run the project.
